@@ -39,6 +39,12 @@ try:
 
     pipeline.run()
 
+    # clean temp dir, or not?
+    for root, dirs, files in os.walk(workspace, topdown=False):
+        for name in files:
+            os.remove(os.path.join(root,name))
+        for name in dirs:
+            os.rmdir(os.path.join(root, name))
 
 except:
     print("Error opening or running pipeline")
