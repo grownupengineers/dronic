@@ -1,6 +1,9 @@
 #!/usr/bin/env dronic
 #
-# execute with 'python3 -m dronic test_job.py
+# --[execute with 'python3 -m dronic test_job.py]--
+#
+# execute with 'scripts/test_job.py'
+# or 'dronic scripts/test_job.py'
 #
 
 @stage
