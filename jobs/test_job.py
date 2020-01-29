@@ -20,5 +20,8 @@ def step1():
     core.log("this is step 1")
 
 @stage
-def step2():
-    core.log("this is step 2")
+def creds():
+    core.log("credentials example")
+
+    secret_value = core.credentials('secret-value')
+    fb_user,fb_pass = core.credentials('fb-creds')
