@@ -1,4 +1,6 @@
 
+from . import Credentials
+
 class Core(object):
     
     def __init__(self,jobfile:str,argv:list,workspace:str):
@@ -6,6 +8,10 @@ class Core(object):
         self._jobfile_ = os.path.basename(jobfile)
         self._jobdir_ = os.path.dirname(os.getcwd()+'/'+jobfile)
         self._workspace_ = workspace
+
+        # instead of having a separate credentials object
+        # make it a property here
+        self._credentials_ = Credentials()
 
     def argv(self,idx):
         return self._argv_[idx]
@@ -48,3 +54,7 @@ class Core(object):
     @property
     def jobdir(self):
         return self._jobdir_
+    
+    @property
+    def credentials(self):
+        return self._credentials_
