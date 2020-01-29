@@ -12,6 +12,10 @@ class Credentials(object):
         self._vault = vault is None ? DEFAULT_VAULT_PATH : vault
         # this should be read-only, so we can keep multiple connections open
         self._conn = sqlite3.connect(self._vault)
+        # TODO execute initialization script
+        # init_fd = open('path/to/init_vault.sql')
+        # self._conn.executescript(init_fd.read()).close()    # close cursor
+        # init_fd.close()
     
     # to be callable
     # like in:

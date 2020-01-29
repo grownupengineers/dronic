@@ -17,17 +17,17 @@
     - password (str) - the password
 */
 
-CREATE TABLE CredMap(
+CREATE TABLE IF NOT EXISTS CredMap(
     cred_id TEXT NOT NULL UNIQUE PRIMARY KEY,
     table TEXT NOT NULL
 );
 
-CREATE TABLE Secret(
+CREATE TABLE IF NOT EXISTS Secret(
     cred_id TEXT NOT NULL UNIQUE REFERENCES CredMap(cred_id),
     secret TEXT NOT NULL
 );
 
-CREATE TABLE UserPass(
+CREATE TABLE IF NOT EXISTS UserPass(
     cred_id TEXT NOT NULL UNIQUE REFERENCES CredMap(cred_id),
     username TEXT NOT NULL,
     password TEXT NOT NULL
