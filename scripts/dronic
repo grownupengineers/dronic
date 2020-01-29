@@ -1,0 +1,11 @@
+#!/bin/bash
+#
+# utility to run dronic job
+#
+# put a shebang in the job file:
+#	#!/usr/bin/env dronic
+#
+# and symlink this to a PATH'able path
+#
+
+python3 -m dronic $@

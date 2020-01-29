@@ -1,3 +1,4 @@
+#!/usr/bin/env dronic
 #
 # execute with 'python3 -m dronic test_job.py
 #
