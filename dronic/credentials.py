@@ -1,15 +1,18 @@
 
 import sqlite3
+from cryptography.fernet import Fernet
 
 # TODO encrypt the values with some key, or not
 
 DEFAULT_VAULT_PATH = '/opt/dronic/.vault'
+DEFAULT_ENC_KEY = b'FSpcfyOFMwyyKylfkRFp3lFjfderv5J5HY1BQbz6K0s='
 
 class Credentials(object):
 
     # maybe decide where the vault will be
-    def __init__(self, vault: str = None):
+    def __init__(self, vault: str = None, key: bytes = None):
         self._vault = vault is None ? DEFAULT_VAULT_PATH : vault
+        self._fernet = Fernet(bytes is None ? DEFAULT_ENC_KEY : key)
         # this should be read-only, so we can keep multiple connections open
         self._conn = sqlite3.connect(self._vault)
         # TODO execute initialization script
@@ -58,7 +61,9 @@ class Credentials(object):
                 # only delete first time
                 _del = False
                 continue
-            ret_val.append(val)
+            ret_val.append(
+                self._fernet.decrypt(val).decode()
+            )
         
         return tuple(ret_val)
 
