@@ -1,7 +1,14 @@
 from .pipeline import Pipeline
-from .core import Core
+from .workspace import Workspace
+from .builtins import Builtins
+from .credentials import Credentials
+from .plugin import Plugin, CredentialsPlugin
 
-__all_- = [
+__all__ = [
     'Pipeline',
-    'Core'
+    'Workspace',
+    'Builtins',
+    'Credentials',
+    'Plugin',
+    'CredentialsPlugin'
 ]
