@@ -1,5 +1,9 @@
+#!/usr/bin/env dronic
 #
-# execute with 'python3 -m dronic test_job.py
+# --[execute with 'python3 -m dronic test_job.py]--
+#
+# execute with 'scripts/test_job.py'
+# or 'dronic scripts/test_job.py'
 #
 
 @stage
@@ -16,5 +20,8 @@ def step1():
     core.log("this is step 1")
 
 @stage
-def step2():
-    core.log("this is step 2")
+def creds():
+    core.log("credentials example")
+
+    secret_value = core.credentials('secret-value')
+    fb_user,fb_pass = core.credentials('fb-creds')
