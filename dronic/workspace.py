@@ -21,7 +21,7 @@ class Workspace(object):
         filepath = os.path.join(self._workspace_,module)
         
         if os.path.abspath(filepath).startswith(self._workspace_):
-            return importlib.machinery.SourceFileLoader(fullname=module, path=filepath).load_module()
+            return importlib.machinery.SourceFileLoader(fullname=module, path=filepath).load_module() # pylint: disable=no-value-for-parameter
 
         raise ModuleNotFoundError(f"Module {module} not found!")
     

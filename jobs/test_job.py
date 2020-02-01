@@ -25,7 +25,9 @@ def step1():
 def creds():
     workspace.log("credentials example")
 
-    workspace.log(params['a'])
-    workspace.log(params['c'])
+    workspace.log(parameters['a'])
+    workspace.log(parameters['c'])
+
+    parameters['a'] = 'b'
     # secret_value = workspace.credentials('secret-value')
     # fb_user,fb_pass = workspace.credentials('fb-creds')
