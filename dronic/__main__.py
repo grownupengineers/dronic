@@ -47,14 +47,13 @@ except Exception as e:
     exit(1)
 
 pipeline = Pipeline()
-stage = pipeline.decorator
 
 workspace = Workspace(workspace = job_workspace)
-builtins = Builtins()
+builtins = Builtins(job_params)
 credentials = Credentials()
 
-safe_globals['stage'] = stage
-safe_globals['params'] = job_params
+safe_globals['stage'] = pipeline.decorator
+safe_globals['parameters'] = builtins.parameters
 safe_globals['_getitem_'] = builtins.safe_get_item
 safe_globals['_write_'] = builtins.safe_write
 # We will provide a set of API objects ( ie: credentials, git, docker, etc ) 
