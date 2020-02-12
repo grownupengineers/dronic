@@ -8,4 +8,11 @@
 # and symlink this to a PATH'able path
 #
 
-python3 -m dronic $@
+set -e
+
+docker pull dronic:latest
+
+docker run --rm \
+    --mount type=bind,source="$(pwd)/jobs",target=/workspace,readonly \
+    dronic:latest $@
+
