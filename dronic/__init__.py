@@ -1,3 +1,4 @@
+from .stage import StageClass
 from .pipeline import Pipeline
 from .workspace import Workspace
 from .builtins import Builtins
