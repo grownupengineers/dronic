@@ -1,4 +1,5 @@
 
+from . import StageClass
 
 #
 # Dronic Pipeline
@@ -11,9 +12,7 @@ class Pipeline(object):
 	#
 	# stage decorator
 	#
-	def decorator(self, function):
-		self._stages.append(function)
-		return function	# or None
+	decorator = StageClass
 
 	def run(self):
 		success = True

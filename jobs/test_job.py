@@ -6,7 +6,7 @@
 # or 'dronic scripts/test_job.py'
 #
 
-@stage
+@stage("Load resources and modules")
 def step1():
     a = { 'a': 'b'}
     a['c'] = 'd'
@@ -21,7 +21,7 @@ def step1():
     workspace.log(module.test_my_module())
     workspace.log("this is step 1")
 
-@stage
+@stage("Load credentials")
 def creds():
     workspace.log("credentials example")
 
