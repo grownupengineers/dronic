@@ -16,10 +16,10 @@ class Pipeline(object):
 
 	def run(self):
 		success = True
-		for stage in self._stages:
-			print("Stage", stage.__name__)
+		for stage in StageClass.stages:
+			print("Stage '%s'" % stage.name)
 			try:
-				ret_val = stage()
+				ret_val = stage.run()
 				if not ret_val and ret_val is not None:
 					raise Exception("Stage returned False")
 			except Exception as e:

@@ -16,6 +16,9 @@ class StageClass(object):
     # this can be overriden
     # so that the list
     CONTAINER = []
+    stages = CONTAINER
+
+    name = property(lambda self : self._name)
 
     def __init__(self, name, *args, **kwargs):
         self._name = name
@@ -26,7 +29,7 @@ class StageClass(object):
     
     def __call__(self, function):
         self._function = function
-        StageClass.CONTAINER.append(function)
+        StageClass.CONTAINER.append(self)
         return function
     
     def run(self):
@@ -40,5 +43,5 @@ class StageClass(object):
     __repr__ = __str__
 
     # static method
-    def stages():
-        return StageClass.CONTAINER
+    # def stages():
+    #     return StageClass.CONTAINER
