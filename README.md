@@ -1,2 +1,4 @@
 
-run with 'python3 -m dronic <jobfile> [<params> ...]
+# Dronic
+
+run with 'dronic \<jobfile\> [\<params\> ...]
