@@ -12,17 +12,15 @@ class Plugin(object):
         """The method that we expect all plugins to implement. This is the
         method that our framework will call
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def finalize(self):
         """The method that we expect all plugins to implement. This is the
         method that our framework will call
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
 class CredentialsPlugin(Plugin):
 
     def __init__(self):
         pass
-
-    
