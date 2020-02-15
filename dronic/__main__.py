@@ -28,7 +28,7 @@ if not os.path.exists(job_workspace):
 try:
     job_params = {}
     for param in args.params:
-        key, value = param.split('=')
+        key, value = param.split('=',1)
         job_params[key] = value
 except Exception as e:
     print("Error parsing parameters file:", str(e))
@@ -63,6 +63,7 @@ safe_globals['credentials'] = credentials
 job_locals = {}
 
 try:
+    print("Compiling job...")
     # The pipeline runs on a sandboxed environment with limited access
     byte_code = compile_restricted(contents, argv[1], 'exec')
     exec(byte_code, safe_globals,job_locals)
@@ -71,8 +72,8 @@ except Exception as e:
     exit(2)
 
 try:
+    print("Running job...")
     pipeline.run()
 except Exception as e:
     print("Error running job file:", str(e))
     exit(3)
-
