@@ -39,3 +39,39 @@ class Workspace(object):
     @property
     def workspace(self):
         return self._workspace_
+    
+    def mkdir(self, directory):
+        # TODO maybe sanitize the directory
+        os.mkdir(directory)
+    
+    #
+    # class dir
+    #
+    # allow to change directory
+    # used within a context
+    #
+    # with workspace.dir('src/backend'):
+    #   compile_project()
+    #   publish_project()
+    #
+    # TODO to move this class out of this class
+    # maybe create a subpackage for workspace related
+    # functions ?
+    #
+    class dir(object):
+
+        def __init__(self, directory):
+            # FIXME sanitize directory
+            if not os.path.isdir(directory):
+                raise FileNotFoundError(f"directory '{directory}' does not exist")
+            self._from = os.getcwd()
+            self._target = directory
+        
+        # enter context
+        def __enter__(self):
+            os.chdir(self._target)
+            #return None
+        
+        # exit context
+        def __exit__(self):
+            os.chdir(self._from)
