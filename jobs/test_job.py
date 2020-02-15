@@ -28,6 +28,9 @@ def creds():
     workspace.log(parameters['a'])
     workspace.log(parameters['c'])
 
-    parameters['a'] = 'b'
+    try:
+        parameters['a'] = 'b'
+    except:
+        workspace.log("caught exception")
     # secret_value = workspace.credentials('secret-value')
     # fb_user,fb_pass = workspace.credentials('fb-creds')
