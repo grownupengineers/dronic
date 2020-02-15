@@ -4,6 +4,8 @@ class Plugin(object):
     """
 
     def __init__(self):
+        # name of the plugin, to be passed as global to job context
+        self.name = "base_plugin"
         self.description = 'UNKNOWN'
         self.version = '0.0.0'
         self.author = ''
