@@ -1,2 +1,3 @@
 RestrictedPython
 cryptography
+dulwich
