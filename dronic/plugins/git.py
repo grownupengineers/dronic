@@ -60,9 +60,9 @@ class GitPlugin(Plugin):
             b"refs/heads/%s" % branch.encode
         )
     
-    def checkout(self, branch):
+    def checkout(self, branch, location='.'):
         # like above
-        repo = porcelain.Repo('.')
+        repo = porcelain.Repo(location)
 
         commit = repo.__getitem__(b'refs/remotes/origin/%s' % branch.encode())
         if commit is None:
