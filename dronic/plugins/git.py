@@ -129,3 +129,8 @@ class GitPlugin(Plugin):
                 branches.append(branch)
         
         return branches
+
+    @property
+    def tags(self, location='.'):
+        # TODO implement
+        raise NotImplemented()
