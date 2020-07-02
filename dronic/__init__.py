@@ -3,7 +3,7 @@ from .pipeline import Pipeline
 from .workspace import Workspace
 from .builtins import Builtins
 from .credentials import Credentials
-from .plugin import Plugin, CredentialsPlugin
+from .plugin import Plugin, CredentialsPlugin, PluginFactory
 
 __all__ = [
     'Pipeline',
@@ -11,5 +11,6 @@ __all__ = [
     'Builtins',
     'Credentials',
     'Plugin',
-    'CredentialsPlugin'
+    'CredentialsPlugin',
+    'PluginFactory'
 ]
