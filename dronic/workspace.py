@@ -43,6 +43,15 @@ class Workspace(object):
     def mkdir(self, directory):
         # TODO maybe sanitize the directory
         os.mkdir(directory)
+
+    def exists(self, path):
+        return os.path.exists(path)
+
+    def isfile(self, path):
+        return os.path.isfile(path)
+
+    def isdir(self, path):
+        return os.path.isdir(path)
     
     #
     # class dir
