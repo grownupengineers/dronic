@@ -11,7 +11,7 @@ from RestrictedPython import safe_globals
 
 from sys import argv
 
-from . import Pipeline, Workspace, Builtins, Credentials
+from . import Pipeline, Workspace, Builtins, Credentials, PluginFactory
 
 parser = argparse.ArgumentParser(prog="dronic",description="Runs a dronic pipeline script")
 #parser.add_argument("--workspace", default='.', help="set the workspace directory")
@@ -56,6 +56,7 @@ pipeline = Pipeline()
 workspace = Workspace(workspace = job_space)
 builtins = Builtins(job_params)
 credentials = Credentials()
+plugin_factory = PluginFactory()
 
 safe_globals['stage'] = pipeline.decorator
 safe_globals['parameters'] = builtins.parameters
@@ -64,6 +65,7 @@ safe_globals['_write_'] = builtins.safe_write
 # We will provide a set of API objects ( ie: credentials, git, docker, etc ) 
 safe_globals['workspace'] = workspace
 safe_globals['credentials'] = credentials
+safe_globals['plugin'] = plugin_factory
 
 job_locals = {}
 
