@@ -5,6 +5,7 @@
 FROM python:3-slim
 
 ENV WORKSPACE /workspace
+ENV JOBSPACE /jobs
 # to include dronic
 ENV PYTHONPATH /usr/src
 
@@ -15,11 +16,12 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.
 
 COPY deployment/entrypoint.sh /usr/local/bin/
 
-WORKDIR /
+RUN mkdir /workspace
+WORKDIR /workspace
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # most likely to change
 # dronic at /usr/src/dronic
 COPY dronic /usr/src/dronic
 
-# mount jobs as /workspace
+# mount jobs as /jobs

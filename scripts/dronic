@@ -15,6 +15,6 @@ test ${#@} -ge 1 || { echo "read help" ; exit 1; }
 #docker pull dronic:latest
 
 docker run --rm \
-    --mount type=bind,source="$(pwd)",target=/workspace,readonly \
+    --mount type=bind,source="$(pwd)/jobs",target=/jobs,readonly \
     --workdir /workspace \
     dronic:latest $@

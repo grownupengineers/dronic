@@ -14,16 +14,21 @@ from sys import argv
 from . import Pipeline, Workspace, Builtins, Credentials
 
 parser = argparse.ArgumentParser(prog="dronic",description="Runs a dronic pipeline script")
-parser.add_argument("--workspace", default='.', help="set the workspace directory")
+#parser.add_argument("--workspace", default='.', help="set the workspace directory")
 parser.add_argument("jobfile", default='main.py', help="set the name of the job to run")
 parser.add_argument("params", nargs='*', help="the pipeline parameters")
 args = parser.parse_args()
 
-job_workspace = os.path.abspath(args.workspace)
+#job_workspace = os.path.abspath(args.workspace)
+workspace = os.getenv('WORKSPACE','/workspace')
+job_space = os.path.abspath(os.getenv('JOBSPACE','/jobs'))
 
-if not os.path.exists(job_workspace):
-    print("Workspace does not exists! Aborting....")
+if not os.path.exists(job_space):
+    print("Jobs workspace does not exist! Aborting....")
     exit(1)
+
+if not os.path.exists(workspace):
+    print("Workspace does not exist! Aborting")
 
 try:
     job_params = {}
@@ -34,21 +39,21 @@ except Exception as e:
     print("Error parsing parameters file:", str(e))
     exit(1)
 
-if not os.path.exists(os.path.join(job_workspace,args.jobfile)):
+if not os.path.exists(os.path.join(job_space,args.jobfile)):
     print("Job does not exists! Aborting....")
     exit(1)
 
 try:
-    fd = open(os.path.join(job_workspace,args.jobfile))
-    contents = fd.read()
-    fd.close()
+    with open(os.path.join(job_space,args.jobfile)) as fd:
+        contents = fd.read()
 except Exception as e:
     print("Error reading job file:", str(e))
     exit(1)
 
 pipeline = Pipeline()
 
-workspace = Workspace(workspace = job_workspace)
+# modules and resources are at job_spabe (/jobs)
+workspace = Workspace(workspace = job_space)
 builtins = Builtins(job_params)
 credentials = Credentials()
 
