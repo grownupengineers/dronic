@@ -3,10 +3,13 @@
 #
 
 import os
+import re
+
+re_repo_name = re.compile(r'[a-z0-9_-]+(?=(\.git)?$)')
 
 from .. import Plugin
 
-from dulwich import porcelain
+import dulwich.porcelain
 
 class GitPlugin(Plugin):
 
@@ -15,122 +18,85 @@ class GitPlugin(Plugin):
         self.description = 'Git Plugin for Dronic'
         self.version = '0.0.0'
         self.author = "Tiago Teixeira <tiago.t@sapo.pt>"
-    
+
     def initialize(self):
         pass
-    
+
     def finalize(self):
         pass
-    
-    # clone a repository to target directory
-    # eventually changing to branch
+
+
     #
-    # git.clone('git@bitbucket.org:alexpires/dronic.git', 'src/dronic', 'feature/clone')
-    def clone(self, remote, target, branch=None):
-        # TODO sanitize target
-        if not os.path.exists(target):
-            # make it
-            os.makedirs(target)
-        
-        if not os.path.isdir(target):
-            raise Exception(f"{target} is not a directory")
+    # Git functions
+    #
 
-        repo = porcelain.clone(remote, target)
+    def clone(repo):
+        target_path = re_repo_name.findall(repo)[0]
+        dulwich.porcelain.clone(repo, target=target_path)
 
-        if branch is None:
-            # just that
-            return
+    def checkout(branch, create=False):
+        # see https://github.com/dulwich/dulwich/issues/576
 
-        commit = repo.__getitem__(b'refs/remotes/origin/%s' % branch.encode())
-        if commit is None:
-            raise Exception(f"branch/commit {branch} not found")
-        
-        # fetch/pull branch from remote
-        porcelain.pull(
-            repo.path,
-            remote,
-            refspecs=[b'refs/heads/%s' % branch.encode()]
-        )
+        repo = dulwich.porcelain.Repo('.')
 
-        # checkout/build index
-        repo.reset_index(commit.tree)
-        # set head
-        repo.refs.set_symbolic_ref(
-            b"HEAD",
-            b"refs/heads/%s" % branch.encode
-        )
-    
-    def checkout(self, branch, location='.'):
-        # like above
-        repo = porcelain.Repo(location)
+        branch_bytes = branch.encode()
 
-        commit = repo[b'refs/remotes/origin/%s' % branch.encode()]
-        if commit is None:
-            raise Exception(f"branch/commit {branch} not found")
-        
-        # get remote
-        remote = repo.get_config()[(b'remote',b'origin')][b'url']
+        local_ref = b'refs/heads/%s' % branch_bytes
+        remote_ref = b'refs/remotes/origin/%s' % branch_bytes
 
-        # fetch/pull branch from remote
-        porcelain.pull(
-            repo.path,
-            remote,
-            refspecs=[b'refs/heads/%s' % branch.encode()]
-        )
+        if local_ref not in repo:
+            # need to actually checkout
 
-        # set head
-        repo.refs.set_symbolic_ref(
-            b"HEAD",
-            b"refs/heads/%s" % branch.encode
-        )
-        # checkout/build index
-        commit = repo[b'HEAD']
-        repo.reset_index(commit.tree)
-    
-    def pull(self, location='.'):
-        repo = porcelain.Repo(location)
+            # user should fetch first
+            if remote_ref no in repo:
+                # branch not available
+                raise ValueError('unknown branch')
 
-        # get head refspec
-        head = repo.refs.get_symrefs()[b'HEAD']
+            # checkout from remote
+            repo[local_ref] = repo[remote_ref]
 
-        # get remote
-        remote = repo.get_config()[(b'remote',b'origin')][b'url']
+            # update config file
+            config = repo.get_config()
+            config.set((b'branch',branch_bytes), b'remote', b'origin')
+            config.set(b'branch',branch_bytes), b'merge', local_ref)
+            config.write_to_path()
 
-        porcelain.pull(
-            repo.path,
-            remote,
-            refspecs=[head]
-        )
+        # set head and build index
+        old_head = repo[b'HEAD']
+        old_tree = repo.get_object(old_head.tree)
+        repo.refs.set_symbolic_ref(b'HEAD',local_ref)
+        new_head = repo[b'HEAD']
+        new_tree = repo.get_object(new_head.tree)
+        repo.reset_index(head.tree)
 
-        # update index
-        commit = repo[b'HEAD']
-        repo.reset_index(commit.tree)
-
-        # done
+        # TODO clean tree
+        # remove files tracked in old_tree, but not tracked in new_tree
+        old_files = set(self._list_files(repo,old_tree))
+        new_files = set(self._list_files(repo,new_tree))
+        # old_files - new_files -> files that are not in NEW but were in OLD
+        to_remove = old_files-new_files
+        for file in to_remove:
+            os.remove(file)
+        # and then, maybe, remove empty folders
         
 
-    # list branches
-    @property
-    def branches(self, location='.'):
-        repo = porcelain.Repo(location)
+    #
+    # internal
+    #
 
-        refs = [ref.decode() for ref in repo.get_refs().keys()]
-
-        branches = []
-        for ref in refs:
-            if ref.startswith('refs/heads'):
-                branch = ref.replace('refs/heads','',1))
-            elif ref.startswith('refs/remotes/origin'):
-                branch = ref.replace('refs/remotes/origin','',1))
-            else:
-                # wierd
+    def _list_files(self, repo, tree, parent=''):
+        files = []
+        for i in tree.iteritems():
+            path = os.path.join(parent,i.path.decode())
+            if i.mode == 16384:
+                # folder
+                files += self._list_files(
+                    repo=repo,
+                    tree=repo.get_object(i.sha),
+                    parent=path
+                )
                 continue
-            if branch not in branches:
-                branches.append(branch)
-        
-        return branches
+            files.append(path)
+        return files
 
-    @property
-    def tags(self, location='.'):
-        # TODO implement
-        raise NotImplemented()
+plugin_class = GitPlugin
