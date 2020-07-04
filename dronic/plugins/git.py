@@ -5,7 +5,7 @@
 import os
 import re
 
-re_repo_name = re.compile(r'[a-z0-9_-]+(?=(\.git)?$)')
+re_repo_name = re.compile(r'([a-z0-9_-]+)(\.git)?$')
 
 from .. import Plugin
 
@@ -30,11 +30,11 @@ class GitPlugin(Plugin):
     # Git functions
     #
 
-    def clone(repo):
-        target_path = re_repo_name.findall(repo)[0]
+    def clone(self,repo):
+        target_path = re_repo_name.search(repo).group(1)
         dulwich.porcelain.clone(repo, target=target_path)
 
-    def checkout(branch, create=False):
+    def checkout(self,branch, create=False):
         # see https://github.com/dulwich/dulwich/issues/576
 
         repo = dulwich.porcelain.Repo('.')
@@ -44,11 +44,13 @@ class GitPlugin(Plugin):
         local_ref = b'refs/heads/%s' % branch_bytes
         remote_ref = b'refs/remotes/origin/%s' % branch_bytes
 
+        print(local_ref, remote_ref)
+
         if local_ref not in repo:
             # need to actually checkout
 
             # user should fetch first
-            if remote_ref no in repo:
+            if remote_ref not in repo:
                 # branch not available
                 raise ValueError('unknown branch')
 
@@ -58,7 +60,7 @@ class GitPlugin(Plugin):
             # update config file
             config = repo.get_config()
             config.set((b'branch',branch_bytes), b'remote', b'origin')
-            config.set(b'branch',branch_bytes), b'merge', local_ref)
+            config.set((b'branch',branch_bytes), b'merge', local_ref)
             config.write_to_path()
 
         # set head and build index
