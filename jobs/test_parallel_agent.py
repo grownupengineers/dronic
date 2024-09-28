@@ -1,13 +1,13 @@
 
 @stage("Executed locally")
 def locally():
+
 	workspace.log("Executing locally")
 
-with Agent("x86_64"):
-
-	@stage("on agent")
-	def on_agent():
-		workspace.log("Executing on agent")
+# with Agent("x86_64"):
+# 	@stage("on agent")
+# 	def on_agent():
+# 		workspace.log("Executing on agent")
 
 with Parallel():
 	@stage("parallel-1")
