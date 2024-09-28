@@ -52,11 +52,14 @@ workspace = Workspace(workspace = job_workspace)
 builtins = Builtins(job_params)
 credentials = Credentials()
 
+# new globals needed:
+# - Parallel
+# - Agent
 safe_globals['stage'] = pipeline.decorator
 safe_globals['parameters'] = builtins.parameters
 safe_globals['_getitem_'] = builtins.safe_get_item
 safe_globals['_write_'] = builtins.safe_write
-# We will provide a set of API objects ( ie: credentials, git, docker, etc ) 
+# We will provide a set of API objects ( ie: credentials, git, docker, etc )
 safe_globals['workspace'] = workspace
 safe_globals['credentials'] = credentials
 
@@ -77,3 +80,4 @@ try:
 except Exception as e:
     print("Error running job file:", str(e))
     exit(3)
+
