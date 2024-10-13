@@ -34,3 +34,9 @@ def creds():
         workspace.log("caught exception")
     # secret_value = workspace.credentials('secret-value')
     # fb_user,fb_pass = workspace.credentials('fb-creds')
+
+@stage("Test sh")
+def test_sh():
+    out = sh('echo hello', return_stdout=True)
+    workspace.log(f"output '{out.strip()}'")
+
