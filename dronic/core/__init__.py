@@ -1,0 +1,4 @@
+#
+# Core plugins for dronic
+#
+

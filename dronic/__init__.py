@@ -5,7 +5,12 @@ from .builtins import Builtins
 from .credentials import Credentials
 from .parallel import Parallel
 from .agent import Agent
-from .plugin import Plugin, CredentialsPlugin
+from .plugin import (
+    Plugin,
+    CredentialsPlugin,
+    StepPlugin,
+    AgentPlugin,
+)
 
 __all__ = [
     'Pipeline',

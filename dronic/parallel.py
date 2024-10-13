@@ -23,11 +23,10 @@ class Parallel(object):
 		self._save = None
 
 	def __enter__(self):
-		self._save = StageClass.CONTAINER
-		StageClass.CONTAINER = self._stages
+		self._save = StageClass.hijack(self._stages)
 
 	def __exit__(self, _type, value, traceback):
-		StageClass.CONTAINER = self._save
+		StageClass.restore(self._save)
 		parallel_stage = StageClass("Parallel")(self._runner)
 
 	def _runner(self):

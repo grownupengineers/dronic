@@ -30,28 +30,19 @@ class Agent(object):
 		self._save = None
 
 	def __enter__(self):
-		self._save = StageClass.CONTAINER
-		StageClass.CONTAINER = self._stages
+		self._save = StageClass.hijack(self._stages)
 
 	def __exit__(self, _type, value, traceback):
-		StageClass.CONTAINER = self._save
-		parallel_stage = StageClass("Agent")(self._runner)
+		StageClass.restore(self._save)
+		agent_stage = StageClass("Agent")(self._runner)
 
 	def _runner(self):
 		# TODO implement
-		# figure out how to pass the stage code _and_ context to a remote
-		# agent.
 		#
-		# _If_ both agent and "controller" are running the same python version,
-		# the code object (bytecode) should be the same.
+		# Iter all agent plugins and get first that "can provision" and
+		# provision it.
 		#
-		# `multiprocessing` has remote servers which may be a good starting
-		# point for the implementation:
-		# 1. spawn dronic with special `--agent` flag, possibly with labels;
-		# 2. pass workspace/context (tar ball);
-		# 3. agent reads pipeline file and finds stages for agent;
-		# 3.1. agents exposes interfaces to execute those stages;
-		# 4. when finished (signal), stop the agent.
+		# iter all stages and call the respective on the remote.
 
 		raise NotImplementedError
 
