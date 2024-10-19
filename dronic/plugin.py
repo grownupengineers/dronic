@@ -42,9 +42,9 @@ class Plugin(object):
                 yield from []
 
     def __init__(self):
-        self.description = 'UNKNOWN'
-        self.version = '0.0.0'
-        self.author = ''
+        self.description = "UNKNOWN"
+        self.version = "0.0.0"
+        self.author = ""
 
     def initialize(self):
         """The method that we expect all plugins to implement. This is the
@@ -58,30 +58,35 @@ class Plugin(object):
         """
         raise NotImplementedError
 
+
 class CredentialsPlugin(Plugin):
 
     def __init__(self):
         pass
 
+
 class StepPlugin(Plugin):
-    """Base class for plugins that implement custom functions
-    """
+    """Base class for plugins that implement custom functions"""
 
     # __init__, initialize, finalize do generally nothing
-    def __init__(self): pass
-    def initialize(self): pass
-    def finalize(self): pass
+    def __init__(self):
+        pass
+
+    def initialize(self):
+        pass
+
+    def finalize(self):
+        pass
 
     name: str = None
 
     def __call__(self, *args, **kwds):
-        """Method called to invoke this plugin steps
-        """
+        """Method called to invoke this plugin steps"""
         raise NotImplementedError
 
+
 class AgentPlugin(Plugin):
-    """Base class for Agent Provider plugin.
-    """
+    """Base class for Agent Provider plugin."""
 
     def __init__(self):
         pass
@@ -105,4 +110,3 @@ class AgentPlugin(Plugin):
         needed.
         """
         raise NotImplementedError
-

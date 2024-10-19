@@ -9,6 +9,7 @@
 #       # do stuff
 #
 
+
 class StageClass(object):
 
     # holds the stages declared
@@ -19,7 +20,7 @@ class StageClass(object):
     ALL = []
     stages = CONTAINER
 
-    name = property(lambda self : self._name)
+    name = property(lambda self: self._name)
 
     def __init__(self, name: str, *args, **kwargs):
         self._name = name
@@ -38,7 +39,7 @@ class StageClass(object):
 
     def run(self):
         if self._function is None:
-            return None # or throw exception
+            return None  # or throw exception
         return self._function()
 
     def __str__(self):
@@ -66,4 +67,3 @@ class StageClass(object):
     # static method
     # def stages():
     #     return StageClass.CONTAINER
-

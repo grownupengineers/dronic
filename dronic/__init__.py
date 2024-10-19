@@ -13,11 +13,10 @@ from .plugin import (
 )
 
 __all__ = [
-    'Pipeline',
-    'Workspace',
-    'Builtins',
-    'Credentials',
-    'Plugin',
-    'CredentialsPlugin'
+    "Pipeline",
+    "Workspace",
+    "Builtins",
+    "Credentials",
+    "Plugin",
+    "CredentialsPlugin",
 ]
-

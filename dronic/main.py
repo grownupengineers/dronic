@@ -20,20 +20,31 @@ from . import (
     Parallel,
     Plugin,
 )
+
 # avoid all imports
 from . import plugin as plugin_module
 
+
 def cli():
 
-    parser = argparse.ArgumentParser(prog="dronic",description="Runs a dronic pipeline script")
+    parser = argparse.ArgumentParser(
+        prog="dronic", description="Runs a dronic pipeline script"
+    )
     parser.add_argument("-A", "--agent", action="store_true", help="run in agent mode")
-    parser.add_argument("-P", "--agent-password", default='n0t_v3ry_s4fe', help="set password for agent")
-    parser.add_argument("-p", "--agent-port", type=int, default=50004, help="set port for agent bind")
-    parser.add_argument("-w", "--workspace", default='.', help="set the workspace directory")
-    parser.add_argument("jobfile", default='main.py', help="set the name of the job to run")
-    parser.add_argument("params", nargs='*', help="the pipeline parameters")
+    parser.add_argument(
+        "-P", "--agent-password", default="n0t_v3ry_s4fe", help="set password for agent"
+    )
+    parser.add_argument(
+        "-p", "--agent-port", type=int, default=50004, help="set port for agent bind"
+    )
+    parser.add_argument(
+        "-w", "--workspace", default=".", help="set the workspace directory"
+    )
+    parser.add_argument(
+        "jobfile", default="main.py", help="set the name of the job to run"
+    )
+    parser.add_argument("params", nargs="*", help="the pipeline parameters")
     args = parser.parse_args()
-
 
     job_workspace = os.path.abspath(args.workspace)
 
@@ -44,18 +55,18 @@ def cli():
     try:
         job_params = {}
         for param in args.params:
-            key, value = param.split('=',1)
+            key, value = param.split("=", 1)
             job_params[key] = value
     except Exception as e:
         print("Error parsing parameters file:", str(e))
         exit(1)
 
-    if not os.path.exists(os.path.join(job_workspace,args.jobfile)):
+    if not os.path.exists(os.path.join(job_workspace, args.jobfile)):
         print("Job does not exists! Aborting....")
         exit(1)
 
     try:
-        fd = open(os.path.join(job_workspace,args.jobfile))
+        fd = open(os.path.join(job_workspace, args.jobfile))
         contents = fd.read()
     except Exception as e:
         print("Error reading job file:", str(e))
@@ -65,12 +76,12 @@ def cli():
 
     pipeline = Pipeline()
 
-    workspace = Workspace(workspace = job_workspace)
+    workspace = Workspace(workspace=job_workspace)
     builtins = Builtins(job_params)
     credentials = Credentials()
 
     # load & initialize plugins
-    dronic_plugins = entry_points(group='dronic.plugin')
+    dronic_plugins = entry_points(group="dronic.plugin")
     for plugin_ep in dronic_plugins:
         plugin_class = plugin_ep.load()
         if type(plugin_class) is not type:
@@ -98,10 +109,10 @@ def cli():
         workspace=workspace,
         credentials=credentials,
         Parallel=Parallel,
-        __builtins__=safe_builtins
+        __builtins__=safe_builtins,
     )
-    safe_builtins['_getitem_'] = builtins.safe_get_item
-    safe_builtins['_write_'] = builtins.safe_write
+    safe_builtins["_getitem_"] = builtins.safe_get_item
+    safe_builtins["_write_"] = builtins.safe_write
 
     job_locals = {}
     # add custom/plugin steps to globals
@@ -114,8 +125,8 @@ def cli():
     try:
         print("Compiling job...")
         # The pipeline runs on a sandboxed environment with limited access
-        byte_code = compile_restricted(contents, args.jobfile, 'exec')
-        exec(byte_code, safe_globals,job_locals)
+        byte_code = compile_restricted(contents, args.jobfile, "exec")
+        exec(byte_code, safe_globals, job_locals)
     except Exception as e:
         print("Error compiling job file:", str(e))
         raise e
@@ -132,4 +143,3 @@ def cli():
         except Exception as e:
             print("Error running job file:", str(e))
             exit(3)
-
