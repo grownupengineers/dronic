@@ -9,6 +9,7 @@
 #
 
 from . import StageClass
+from .plugin import Plugin, AgentPlugin
 
 
 class Agent(object):
@@ -38,11 +39,28 @@ class Agent(object):
         agent_stage = StageClass("Agent")(self._runner)
 
     def _runner(self):
-        # TODO implement
-        #
         # Iter all agent plugins and get first that "can provision" and
         # provision it.
         #
         # iter all stages and call the respective on the remote.
 
-        raise NotImplementedError
+        for plugin in Plugin.iter_plugins(AgentPlugin):
+            if plugin.can_provide(*self._args, **self._kwds):
+                break
+        else:
+            # TODO better exception?
+            raise Exception("No plugin can provided requested agent")
+
+        manager = plugin.provision(*self._args, **self._kwds)
+
+        last_result = None
+        for stage in self._stages:
+            try:
+                last_result = manager.do_stage(stage.stage_id)
+            except Exception as exc:
+                plugin.shutdown(manager)
+                raise exc
+
+        plugin.shutdown(manager)
+
+        return last_result

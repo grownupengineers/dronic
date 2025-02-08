@@ -1,10 +1,8 @@
-#!/usr/bin/env dronic
+#!/usr/bin/env dronic-cli
 #
-# --[execute with 'python3 -m dronic test_job.py]--
+# mainly for testing parameters
 #
-# execute with 'scripts/test_job.py'
-# or 'dronic scripts/test_job.py'
-#
+# needs parameters: a, b and c
 
 
 @stage("Load resources and modules")

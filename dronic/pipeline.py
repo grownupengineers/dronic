@@ -1,3 +1,5 @@
+import traceback
+
 from . import StageClass
 
 
@@ -7,7 +9,7 @@ from . import StageClass
 class Pipeline(object):
 
     def __init__(self):
-        self._stages = []
+        pass
 
     #
     # stage decorator
@@ -24,6 +26,7 @@ class Pipeline(object):
                     raise Exception("Stage returned False")
             except Exception as e:
                 print("Caught exception:", str(e))
+                print(traceback.format_exc())
                 success = False
                 break
         print("Pipeline status:", success)

@@ -18,7 +18,10 @@ from . import (
     Builtins,
     Credentials,
     Parallel,
+    Agent,
     Plugin,
+    _config,
+    agent_manager,
 )
 
 # avoid all imports
@@ -29,6 +32,13 @@ def cli():
 
     parser = argparse.ArgumentParser(
         prog="dronic", description="Runs a dronic pipeline script"
+    )
+    parser.add_argument(
+        "-c",
+        "--config",
+        default=_config.DEFAULT_CONFIG_FILE,
+        type=str,
+        help="extra configurations for dronic",
     )
     parser.add_argument("-A", "--agent", action="store_true", help="run in agent mode")
     parser.add_argument(
@@ -45,6 +55,11 @@ def cli():
     )
     parser.add_argument("params", nargs="*", help="the pipeline parameters")
     args = parser.parse_args()
+
+    _config.load_config(args.config)
+    _config.CONFIG["workspace"] = args.workspace
+    _config.CONFIG["jobfile"] = args.jobfile
+    _config.CONFIG["params"] = args.params
 
     job_workspace = os.path.abspath(args.workspace)
 
@@ -83,7 +98,12 @@ def cli():
     # load & initialize plugins
     dronic_plugins = entry_points(group="dronic.plugin")
     for plugin_ep in dronic_plugins:
-        plugin_class = plugin_ep.load()
+        try:
+            plugin_class = plugin_ep.load()
+        except Exception as e:
+            print(f"Warn: failed to load plugin {plugin_ep.name}: {e}")
+            continue
+
         if type(plugin_class) is not type:
             # fail silently
             continue
@@ -99,9 +119,6 @@ def cli():
         # TODO handle exception
         instance.initialize()
 
-    # new globals needed:
-    # - Parallel
-    # - Agent
     safe_globals = dict(
         stage=pipeline.decorator,
         parameters=builtins.parameters,
@@ -109,6 +126,7 @@ def cli():
         workspace=workspace,
         credentials=credentials,
         Parallel=Parallel,
+        Agent=Agent,
         __builtins__=safe_builtins,
     )
     safe_builtins["_getitem_"] = builtins.safe_get_item
@@ -134,7 +152,13 @@ def cli():
 
     if args.agent:
         # run in agent mode
-        raise NotImplementedError
+        agent, do_shutdown = agent_manager.init_manager(args)
+        agent.start()
+        while not do_shutdown.is_set():
+            do_shutdown.wait(30)
+        import time
+        time.sleep(1)
+        agent.shutdown()
     else:
         # executing mode
         try:
@@ -143,3 +167,7 @@ def cli():
         except Exception as e:
             print("Error running job file:", str(e))
             exit(3)
+
+    for plugin in Plugin.iter_plugins():
+        plugin.finalize()
+

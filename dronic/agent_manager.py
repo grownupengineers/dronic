@@ -4,10 +4,12 @@
 
 import os
 import multiprocessing
+from multiprocessing import Event
 from multiprocessing.managers import BaseManager
 
+from . import StageClass
 
-class AgentManager(multiprocessing.managers.BaseManager):
+class AgentManager(BaseManager):
     pass
 
 
@@ -18,16 +20,26 @@ def do_stage(stage_id: int):
     stage.run()
 
 
+shutdown_event = Event()
+
+
 def do_shutdown():
+    # TODO figure out a way to notify the manager/server to stop
     # no stop server or anything
-    exit(0)
+    # exit(0)
+    shutdown_event.set()
 
 
-def init_manager(args) -> AgentManager:
+def init_manager(args) -> "tuple[AgentManager,Event]":
 
     AgentManager.register("do_stage", do_stage)
     AgentManager.register("do_shutdown", do_shutdown)
 
-    return AgentManager(
-        address=("0.0.0.0", args.agent_port), authkey=str.encode(args.agent_password)
+    return (
+        AgentManager(
+            address=("0.0.0.0", args.agent_port),
+            authkey=str.encode(args.agent_password),
+        ),
+        shutdown_event,
     )
+

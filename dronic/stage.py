@@ -47,6 +47,10 @@ class StageClass(object):
 
     __repr__ = __str__
 
+    @property
+    def stage_id(self):
+        return self._stage_id
+
     @classmethod
     def hijack(cls, container: list) -> list:
         save = cls.CONTAINER
@@ -58,7 +62,7 @@ class StageClass(object):
         cls.CONTAINER = save
 
     @classmethod
-    def get_stage(stage_id: int):
+    def get_stage(cls, stage_id: int):
         for stage in cls.ALL:
             if stage._stage_id == stage_id:
                 return stage
@@ -67,3 +71,4 @@ class StageClass(object):
     # static method
     # def stages():
     #     return StageClass.CONTAINER
+
